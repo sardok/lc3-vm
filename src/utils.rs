@@ -38,7 +38,7 @@ pub fn get_imm5(instr: u16) -> u16 {
 }
 
 #[inline]
-pub fn get_char_and_flush() -> u8 {
+pub fn get_char() -> u8 {
     let mut buffer = [0u8; 1];
     io::stdin().read(&mut buffer[..]).unwrap();
     buffer[0]

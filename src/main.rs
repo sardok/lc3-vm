@@ -65,7 +65,7 @@ fn main() {
                 Opcode::ST => {
                     let dr = get_dr(instr);
                     let pc_offset = sign_extend(instr & 0x1ff, 9);
-                    memory::write(registers[Register::PC] + pc_offset, registers[dr]);
+                    memory::write(registers[Register::PC] + pc_offset, registers[dr]).unwrap();
                 }
                 Opcode::JSR => {
                     let long_flag = (instr >> 1) & 0x1 == 1;
@@ -103,7 +103,7 @@ fn main() {
                     let dr = get_dr(instr);
                     let sr1 = get_sr1(instr);
                     let offset = sign_extend(instr & 0x3f, 6);
-                    memory::write(registers[sr1] + offset, registers[dr]);
+                    memory::write(registers[sr1] + offset, registers[dr]).unwrap();
                 }
                 Opcode::NOT => {
                     let dr = get_dr(instr);
@@ -121,7 +121,7 @@ fn main() {
                     let dr = get_dr(instr);
                     let pc_offset = sign_extend(instr & 0x1ff, 9);
                     let loc = memory::read(registers[Register::PC] + pc_offset);
-                    memory::write(loc, registers[dr]);
+                    memory::write(loc, registers[dr]).unwrap();
                 }
                 Opcode::JMP => {
                     let sr1 = get_sr1(instr);
@@ -138,7 +138,7 @@ fn main() {
                     let trap = Trap::try_from(instr & 0xff).unwrap();
                     match trap {
                         Trap::GETC => {
-                            let chr = utils::get_char_and_flush();
+                            let chr = utils::get_char();
                             registers.write_and_update(Register::R0, chr as u16);
                         }
                         Trap::OUT => {
@@ -158,7 +158,7 @@ fn main() {
                             io::stdout().flush().unwrap();
                         }
                         Trap::IN => {
-                            let chr = utils::get_char_and_flush();
+                            let chr = utils::get_char();
                             utils::put_char_and_flush(chr);
                             registers.write_and_update(Register::R0, chr as u16);
                         }
